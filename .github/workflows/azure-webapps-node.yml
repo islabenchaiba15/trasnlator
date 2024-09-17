@@ -36,4 +36,4 @@ jobs:
           app-name: nextjs-translator-app
           slot-name: "Production"
           publish-profile: ${{ secrets.APPLICATION_PUBLISH_PROFILE }}
-          package: ./build/standalone
+          package: ./build
