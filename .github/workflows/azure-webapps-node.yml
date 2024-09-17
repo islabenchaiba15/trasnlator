@@ -1,4 +1,4 @@
-name: Build and deploy Next.js app to Azure Web App
+name: Buildd and deploy Next.js app to Azure Web App 
 
 on:
   push:
