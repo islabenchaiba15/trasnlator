@@ -3,13 +3,20 @@ name: Build and deploy Next.js app to Azure Web App
 on:
   push:
     branches:
-      - master  
+      - master
   workflow_dispatch:
 
 env:
   APPLICATION_PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
   WEBAPP_NAME: "nextjs-translator-app"
-
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+  CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+  AZURE_TEXT_TRANSLATION: ${{ secrets.AZURE_TEXT_TRANSLATION }}
+  AZURE_TEXT_TRANSLATION_KEY: ${{ secrets.AZURE_TEXT_TRANSLATION_KEY }}
+  AZURE_TEXT_LOCATION: ${{ secrets.AZURE_TEXT_LOCATION }}
+  AZURE_API_KEY: ${{ secrets.AZURE_API_KEY }}
+  AZURE_ENDPOINT: ${{ secrets.AZURE_ENDPOINT }}
+  AZURE_DEPLOYMENT_NAME: ${{ secrets.AZURE_DEPLOYMENT_NAME }}
 jobs:
   build:
     runs-on: ubuntu-latest
