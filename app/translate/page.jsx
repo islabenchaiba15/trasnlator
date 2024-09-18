@@ -16,7 +16,7 @@ const response = await fetch(languagesEndpoint, {
 }
 );
 const languages=await response.json()
-console.log(languages)
+// console.log(languages)
 
   return (
     <div className=" flex flex-col justify-star">

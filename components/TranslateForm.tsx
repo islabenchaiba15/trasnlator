@@ -77,7 +77,7 @@ const TranslateForm = ({ languages }: { languages: LanguageData }) => {
   }
 
   useEffect(()=>{
-    console.log(translatedText)
+    // console.log(translatedText)
   },[translatedText])
 
   return (
