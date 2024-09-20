@@ -8,11 +8,11 @@ function Navbar() {
   const {userId} = auth();
   return (
     <div className="w-full bg-white">
-    <div className="max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-row justify-between items-center py-2">
-      <Image src={"/reverso.png"} alt={"reverso"} width={130} height={50} />
+    <div className="max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-row justify-between items-center py-4">
+      <Image priority src={"/reverso.png"} alt={"reverso"} width={130} height={50} />
       <div className="">
         {userId ? (
-          <SignedIn>
+          <SignedIn >
             <UserButton />
           </SignedIn>
         ) : (
