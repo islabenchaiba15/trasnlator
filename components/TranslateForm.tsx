@@ -1,9 +1,9 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useFormContext } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -29,70 +29,131 @@ import { LanguageData } from "@/lib/Types";
 import { SelectGroup, SelectLabel } from "@radix-ui/react-select";
 import { Textarea } from "./ui/textarea";
 import { translate } from "@/actions/translate.actions";
-import { TranslationData } from "@/lib/Types"
+import { TranslationData } from "@/lib/Types";
+import SubmitButton from "./Botton";
+import AudioRecorder from "./Recorder";
 const TranslateForm = ({ languages }: { languages: LanguageData }) => {
   const [translatedText, setTranslatedText] = useState("");
 
+  const { register, watch } = useForm();
+
+  // Watching the "source" field
+  const [pending, setPending] = useState(false);
+
   const FormSchema = z.object({
     source: z.string({
-      required_error: "Please select an email to display.",
+      required_error: "Please select a language",
     }),
     target: z.string({
-      required_error: "Please select an email to display.",
+      required_error: "Please select a lanuage",
     }),
     textsource: z
       .string()
-      .min(10, {
-        message: "Bio must be at least 10 characters.",
+      .min(2, {
+        message: "text must be at least 2 characters.",
       })
       .max(160, {
-        message: "Bio must not be longer than 30 characters.",
+        message: "text must not be longer than 30 characters.",
       }),
-    texttarget: z
-      .string()
-      .optional()
+    texttarget: z.string().optional(),
   });
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-        source: "auto",
-        target:'',
-        textsource:"",
-        texttarget:"",
-
-      },
+      source: "auto",
+      target: "en",
+      textsource: "",
+      texttarget: "",
+    },
   });
-
+  const sourceValue = form.watch("textsource");
+  const targetValue = form.watch("texttarget");
   async function onSubmit(dataa: z.infer<typeof FormSchema>) {
     try {
-        const translatedText = await translate(dataa as TranslationData);
-        form.setValue("texttarget", translatedText);
-        setTranslatedText(translatedText)
-
-      } catch (error) {
-        console.error("Translation error:", error);
-        // You might want to show an error message to the user here
-      }
+      console.log(dataa, "oooooo");
+      const translatedText = await translate(dataa as TranslationData);
+      form.setValue("texttarget", translatedText);
+      setTranslatedText(translatedText);
+    } catch (error) {
+      console.error("Translation error:", error);
+      // You might want to show an error message to the user here
+    }
   }
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const bottonRef = useRef<HTMLButtonElement>(null);
+  const synthRef = useRef<SpeechSynthesis | null>(null);
+  //     useEffect(() => {
+  //       const sourceValue = form.watch("source");
+  //  // Log button reference
 
-  useEffect(()=>{
-    // console.log(translatedText)
-  },[translatedText])
+  //       if (!sourceValue.trim()) return;
+
+  //       const delayDebounceFn = setTimeout(() => {
+  //         bottonRef.current?.click();
+  //         setPending(true);
+  //       }, 500);
+  //       return () => clearTimeout(delayDebounceFn);
+  //     }, [form.watch("source"),form.watch("target"),form.watch("textsource")]);
+
+  useEffect(() => {
+    console.log(translatedText);
+  }, [translatedText]);
+  const speak = async () => {
+    const synth = window.speechSynthesis;
+    if (!synth || !targetValue) return;
+
+    const utterance = new SpeechSynthesisUtterance(targetValue);
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+    synth.speak(utterance);
+  };
+
+  const uploadAudio = async (blob: Blob) => {
+    const mimeType = "audio/webm";
+    const file = new File([blob], "audio.webm", { type: mimeType });
+    const formData = new FormData();
+    formData.append("audio", file);
+
+    const url =
+      process.env.NODE_ENV === "development"
+        ? `http://localhost:3000/api/translateAudio`
+        : `${process.env.AZURE_URL}/api/translateAudio`;
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+      console.log("dataaaaaaaaaaaaaaa", data);
+      if (data.text) {
+        // Assuming you have a form hook to set the transcription value
+        const textSource = data.text;
+        form.setValue("textsource", textSource);
+        bottonRef.current && (bottonRef.current.disabled = false);
+
+        bottonRef.current?.click();
+      } else {
+        console.error("Transcription error:", data);
+      }
+    } catch (error) {
+      console.error("Error uploading audio:", error);
+    }
+  };
 
   return (
     <div className="max-w-6xl w-full mx-auto px-2 my-4 bg-white rounded-lg shadow-md">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="">
           <div className="flex flex-wrap items-center md:p-4 p-2 border-b">
-            <button className="flex items-center space-x-2 bg-blue-100 text-blue-700 px-3 py-1 rounded-md mr-4 mb-2 md:mb-0">
+            {/* <button className="flex items-center space-x-2 px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors">
               <FileText size={18} />
-              <span>Text</span>
-            </button>
-            <button className="flex items-center space-x-2 text-gray-600 px-3 py-1 rounded-md">
-              <Mic size={18} />
-              <span>Speak</span>
-            </button>
+              <span className="text-sm font-bold">Text</span>
+            </button> */}
+            <AudioRecorder uploadAudio={uploadAudio} />
           </div>
           <div className="flex flex-col md:flex-row">
             <div className="flex-1 p-4 md:border-r">
@@ -107,7 +168,7 @@ const TranslateForm = ({ languages }: { languages: LanguageData }) => {
                         defaultValue="auto"
                       >
                         <FormControl>
-                          <SelectTrigger className="w-[250px]">
+                          <SelectTrigger className="w-[250px] border-none text-blue-600 active:border-none font-bold">
                             <SelectValue placeholder="Select a language" />
                           </SelectTrigger>
                         </FormControl>
@@ -142,7 +203,14 @@ const TranslateForm = ({ languages }: { languages: LanguageData }) => {
                     </FormItem>
                   )}
                 />
-                <Volume2 size={18} className="text-gray-400 cursor-pointer" />
+                {/* <Button
+                  type="button"
+                  variant="ghost"
+                  className=""
+                  disabled={!sourceValue}
+                >
+                  <Volume2 size={20} className="text-blue-400 cursor-pointer" />
+                </Button> */}
               </div>
               <FormField
                 control={form.control}
@@ -171,10 +239,10 @@ const TranslateForm = ({ languages }: { languages: LanguageData }) => {
                     <FormItem>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        defaultValue={"en"}
                       >
                         <FormControl>
-                          <SelectTrigger className="w-[250px]">
+                          <SelectTrigger className="w-[250px] border-none text-blue-600 active:border-none font-bold">
                             <SelectValue placeholder="Select a language" />
                           </SelectTrigger>
                         </FormControl>
@@ -201,7 +269,15 @@ const TranslateForm = ({ languages }: { languages: LanguageData }) => {
                     </FormItem>
                   )}
                 />
-                <Volume2 size={18} className="text-gray-400 cursor-pointer" />
+                <Button
+                  variant="ghost"
+                  type="button"
+                  onClick={speak}
+                  className=""
+                  disabled={!targetValue}
+                >
+                  <Volume2 size={20} className="text-blue-400 cursor-pointer" />
+                </Button>{" "}
               </div>
               <FormField
                 control={form.control}
@@ -224,10 +300,12 @@ const TranslateForm = ({ languages }: { languages: LanguageData }) => {
           </div>
           <div className="flex justify-end p-4">
             <Button
+              ref={bottonRef}
               className="bg-blue-800 text-white px-4 py-2 rounded-md hover:bg-blue-900 transition duration-300"
               type="submit"
+              disabled={!form.watch("textsource")}
             >
-              Translate
+              translate
             </Button>
           </div>
         </form>
