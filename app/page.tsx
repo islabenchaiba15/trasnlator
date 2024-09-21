@@ -13,8 +13,8 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="container mx-auto border-t border-gray-300 bg-white">
-      <div className="md:p-10 p-5">
+    <main className="w-full border-t border-gray-300 bg-white">
+      <div className="md:p-10 mx-auto  p-5 max-w-[1300px]">
         <h1 className="text-3xl md:text-4xl lg:text-6xl text-black text-center font-semibold ">
           understand the world and communicate across your languages
         </h1>
@@ -52,7 +52,7 @@ export default function Home() {
                 Enjoy Premium across all reverso products
               </p>
             </div>
-            <Link href="/translate">
+            <Link href="/translate" >
               <Button
                 className="bg-amber-400 p-7 text-xl w-full mt-10 mb-5 md:w-2/3 "
               >
