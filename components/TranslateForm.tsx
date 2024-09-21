@@ -83,18 +83,18 @@ const TranslateForm = ({ languages }: { languages: LanguageData }) => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const bottonRef = useRef<HTMLButtonElement>(null);
   const synthRef = useRef<SpeechSynthesis | null>(null);
-  //     useEffect(() => {
-  //       const sourceValue = form.watch("source");
-  //  // Log button reference
+//       useEffect(() => {
+//         const sourceValue = form.watch("source");
+//    // Log button reference
 
-  //       if (!sourceValue.trim()) return;
+//         if (!sourceValue.trim()) return;
 
-  //       const delayDebounceFn = setTimeout(() => {
-  //         bottonRef.current?.click();
-  //         setPending(true);
-  //       }, 500);
-  //       return () => clearTimeout(delayDebounceFn);
-  //     }, [form.watch("source"),form.watch("target"),form.watch("textsource")]);
+//         const delayDebounceFn = setTimeout(() => {
+//           bottonRef.current?.click();
+//           setPending(true);
+//         }, 500);
+//         return () => clearTimeout(delayDebounceFn);
+//       }, [form.watch("source"),form.watch("target"),form.watch("textsource")]);
 
   useEffect(() => {
     console.log(translatedText);

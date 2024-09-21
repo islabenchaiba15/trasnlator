@@ -6,10 +6,10 @@ import {
   SignInButton,
   SignedIn,
   SignedOut,
-  UserButton
-} from '@clerk/nextjs'
+  UserButton,
+} from "@clerk/nextjs";
 import Navbar from "@/components/Navbar";
-import { Toaster } from "@/components/ui/toaster"
+import { Toaster } from "@/components/ui/toaster";
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -32,15 +32,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      
+    >
       <html lang="en">
         <body className="bg-gray-100">
-          <Navbar/>
+          <Navbar />
           {children}
           <Toaster />
         </body>
       </html>
     </ClerkProvider>
-
   );
 }
