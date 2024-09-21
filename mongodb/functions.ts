@@ -1,4 +1,3 @@
-// File: /mongodb/functions.ts
 
 import mongoose from "mongoose";
 import { User, Translation, IUser, ITranslation } from "./models/User";
@@ -50,13 +49,18 @@ export async function fetchUserTranslations(
 ): Promise<ITranslation[]> {
   try {
     await ConnectDB();
-    const user: IUser | null = await User.findOne({ userID }).populate({
+    const user = await User.findOne({ userID }).populate({
       path: "translations",
       options: { sort: { createdAt: -1 } }, // Sort translations by creation date, newest first
     });
 
     if (!user) {
-      throw new Error("User not found");
+      const newUser = new User({
+        userID,
+        translations: [], // Initialize with an empty translations array
+      });
+      await newUser.save();
+      return [];
     }
 
     return user.translations as ITranslation[];
@@ -64,6 +68,7 @@ export async function fetchUserTranslations(
     console.error("Error fetching user translations:", error);
     throw error;
   }
+
 }
 
 export function getAllLanguageNames(code: string) {

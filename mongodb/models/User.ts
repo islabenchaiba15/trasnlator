@@ -1,37 +1,16 @@
-import mongoose from "mongoose";
-import { Document, model, Schema } from "mongoose";
+import mongoose, { Document, Schema } from 'mongoose';
 
-export interface IUser extends Document {
-  userID: string;
-  translations: ITranslation[];
-}
-
-const userSchema = new Schema<IUser>(
-  {
-    userID: {
-      required: true,
-      type: String,
-      unique: true,
-    },
-
-    translations: {
-      type: [Schema.Types.ObjectId],
-      ref: "Translation",
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
+// Translation Interface
 export interface ITranslation extends Document {
   source: string;
   target: string;
   textsource: string;
   texttarget: string;
-  user: IUser["_id"];
+  user: IUser['_id'];
   createdAt: Date;
 }
 
+// Translation Schema
 const translationSchema = new Schema<ITranslation>(
   {
     source: {
@@ -53,7 +32,7 @@ const translationSchema = new Schema<ITranslation>(
     user: {
       required: true,
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
     },
     createdAt: {
       type: Date,
@@ -65,8 +44,31 @@ const translationSchema = new Schema<ITranslation>(
   }
 );
 
-export const Translation =
-  mongoose.models.Translation || model<ITranslation>("Translation", translationSchema);
+// User Interface
+export interface IUser extends Document {
+  userID: string;
+  translations: ITranslation[];
+}
 
-export const User =
-  mongoose.models.User || model<IUser>("User", userSchema);
+// User Schema
+const userSchema = new Schema<IUser>(
+  {
+    userID: {
+      required: true,
+      type: String,
+      unique: true,
+    },
+    translations: {
+      type: [Schema.Types.ObjectId],
+      ref: 'Translation',
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+// Correct Model Registration to Avoid Re-Definition Errors
+export const Translation = mongoose.models.Translation || mongoose.model<ITranslation>('Translation', translationSchema);
+
+export const User = mongoose.models.User || mongoose.model<IUser>('User', userSchema);
