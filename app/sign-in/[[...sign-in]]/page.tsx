@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 
 export default function SignInPage() {
   return (
-    <div className="grid grow mt-24 items-center sm:justify-center mx-8">
+    <div className="grid grow d mt-24 items-center sm:justify-center mx-8">
       <SignIn.Root>
         <Clerk.Loading>
           {(isGlobalLoading) => (
