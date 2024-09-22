@@ -20,6 +20,7 @@ async function HistoryTranslation() {
       : process.env.AZURE_URL
   }/api/translateHistory?userId=${userId}`;
 
+  console.log("url->>>>>>>>>> ",url)
   // Fetch the history data with error handling
   let translations = [];
   try {
