@@ -8,7 +8,7 @@ import { Button } from "./ui/button";
 function Navbar() {
   const { userId } = auth();
   return (
-    <div className="w-full bg-white">
+    <div className="w-full bg-white ll">
       <div className="max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-row justify-between items-center py-4">
         <Image
           priority
