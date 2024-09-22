@@ -24,7 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { ChevronDown, Volume2, FileText, Mic } from "lucide-react";
+import { ChevronDown, Volume2, FileText, Mic, Loader2 } from "lucide-react";
 import { LanguageData } from "@/lib/Types";
 import { SelectGroup, SelectLabel } from "@radix-ui/react-select";
 import { Textarea } from "./ui/textarea";
@@ -32,13 +32,14 @@ import { translate } from "@/actions/translate.actions";
 import { TranslationData } from "@/lib/Types";
 import SubmitButton from "./Botton";
 import AudioRecorder from "./Recorder";
+import { LoadingSpinner } from "./Spinner";
 const TranslateForm = ({ languages }: { languages: LanguageData }) => {
   const [translatedText, setTranslatedText] = useState("");
 
   const { register, watch } = useForm();
+  const [isTranslating, setIsTranslating] = useState(false);
 
   // Watching the "source" field
-  const [pending, setPending] = useState(false);
 
   const FormSchema = z.object({
     source: z.string({
@@ -71,6 +72,7 @@ const TranslateForm = ({ languages }: { languages: LanguageData }) => {
   const targetValue = form.watch("texttarget");
   async function onSubmit(dataa: z.infer<typeof FormSchema>) {
     try {
+      setIsTranslating(true);
       console.log(dataa, "oooooo");
       const translatedText = await translate(dataa as TranslationData);
       form.setValue("texttarget", translatedText);
@@ -78,23 +80,24 @@ const TranslateForm = ({ languages }: { languages: LanguageData }) => {
     } catch (error) {
       console.error("Translation error:", error);
       // You might want to show an error message to the user here
+    } finally {
+      setIsTranslating(false);
     }
   }
   const [isSpeaking, setIsSpeaking] = useState(false);
   const bottonRef = useRef<HTMLButtonElement>(null);
   const synthRef = useRef<SpeechSynthesis | null>(null);
-  //       useEffect(() => {
-  //         const sourceValue = form.watch("source");
-  //    // Log button reference
+        useEffect(() => {
+          const sourceValue = form.watch("source");
+     // Log button reference
 
-  //         if (!sourceValue.trim()) return;
+          if (!sourceValue.trim()) return;
 
-  //         const delayDebounceFn = setTimeout(() => {
-  //           bottonRef.current?.click();
-  //           setPending(true);
-  //         }, 500);
-  //         return () => clearTimeout(delayDebounceFn);
-  //       }, [form.watch("source"),form.watch("target"),form.watch("textsource")]);
+          const delayDebounceFn = setTimeout(() => {
+            bottonRef.current?.click();
+          }, 500);
+          return () => clearTimeout(delayDebounceFn);
+        }, [form.watch("source"),form.watch("target"),form.watch("textsource")]);
 
   useEffect(() => {
     console.log(translatedText);
@@ -123,6 +126,7 @@ const TranslateForm = ({ languages }: { languages: LanguageData }) => {
     }`;
 
     console.log("url->>>>>>>>>> ", url);
+    setIsTranslating(true);
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -143,6 +147,8 @@ const TranslateForm = ({ languages }: { languages: LanguageData }) => {
       }
     } catch (error) {
       console.error("Error uploading audio:", error);
+    }finally {
+      setIsTranslating(false);
     }
   };
 
@@ -150,7 +156,7 @@ const TranslateForm = ({ languages }: { languages: LanguageData }) => {
     <div className="max-w-6xl w-full mx-auto px-2 my-4 bg-white rounded-lg shadow-md">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="">
-          <div className="flex flex-wrap items-center md:p-4 p-2 border-b">
+          <div className="flex flex-wrap items-center  border-b">
             {/* <button className="flex items-center space-x-2 px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors">
               <FileText size={18} />
               <span className="text-sm font-bold">Text</span>
@@ -305,9 +311,16 @@ const TranslateForm = ({ languages }: { languages: LanguageData }) => {
               ref={bottonRef}
               className="bg-blue-800 text-white px-4 py-2 rounded-md hover:bg-blue-900 transition duration-300"
               type="submit"
-              disabled={!form.watch("textsource")}
+              disabled={!form.watch("textsource") || isTranslating}
             >
-              translate
+              {isTranslating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Translating...
+                </>
+              ) : (
+                "Translate"
+              )}
             </Button>
           </div>
         </form>

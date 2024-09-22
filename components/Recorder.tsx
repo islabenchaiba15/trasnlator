@@ -65,7 +65,7 @@ const AudioRecorder = ({ uploadAudio }: { uploadAudio: (blob: Blob) => void }) =
         type="button"
         onClick={isRecording ? handleStopRecording : handleStartRecording}
         className={`flex items-center space-x-2 px-3 py-1 rounded-md bg-white transition-colors ${
-          isRecording ? "bg-red-500 text-white hover:bg-red-600" : "bg-blue-600 text-white hover:text-white hover:bg-blue-700"
+          isRecording ? "bg-red-500 text-white hover:bg-red-600 " : "bg-blue-600 text-white hover:text-white hover:bg-blue-700"
         }`}
       >
         <Mic size={18} />

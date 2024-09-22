@@ -9,13 +9,13 @@ function Navbar() {
   const { userId } = auth();
   return (
     <div className="w-full bg-white ll">
-      <div className="max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-row justify-between items-center py-4">
+      <div className="max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-row justify-between items-center py-2">
         <Image
           priority
           src={"/reverso.png"}
           alt={"reverso"}
-          width={60}
-          height={30}
+          width={110}
+          height={60}
           className=" w-auto h-auto"
 
         />
