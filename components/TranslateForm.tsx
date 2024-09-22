@@ -118,9 +118,9 @@ const TranslateForm = ({ languages }: { languages: LanguageData }) => {
 
     const url = `${
       process.env.NODE_ENV === "development"
-        ? "http://localhost:3000"
-        : process.env.AZURE_URL
-    }/api/translateAudio`;
+        ? "http://localhost:3000/api/translateAudio"
+        : "https://trasnlator.vercel.app/api/translateAudio"
+    }`;
 
     console.log("url->>>>>>>>>> ", url);
     try {
