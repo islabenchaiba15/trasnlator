@@ -18,13 +18,13 @@ import { cn } from "@/lib/utils";
 
 export default function SignUpPage() {
   return (
-    <div className="flex h-full mt-24 items-center justify-center mx-8">
+    <div className="grid grow d mt-24 items-center sm:justify-center mx-8">
       <SignUp.Root>
         <Clerk.Loading>
           {(isGlobalLoading) => (
             <>
               <SignUp.Step name="start" className="w-full">
-                <Card className="w-full max-w-[100%] md:max-w-[600px]">
+                <Card className="w-full sm:w-96">
                   <CardHeader>
                     <div className="flex items-center flex-col gap-2 justify-center">
                       {/* <Image src={"/reverso.png"} alt={"logo"} className='my-2' width={150} height={70}/> */}

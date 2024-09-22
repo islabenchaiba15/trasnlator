@@ -95,7 +95,7 @@ const TranslateForm = ({ languages }: { languages: LanguageData }) => {
 
           const delayDebounceFn = setTimeout(() => {
             bottonRef.current?.click();
-          }, 500);
+          }, 2000);
           return () => clearTimeout(delayDebounceFn);
         }, [form.watch("source"),form.watch("target"),form.watch("textsource")]);
 
