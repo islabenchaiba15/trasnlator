@@ -14,8 +14,8 @@ function Navbar() {
           priority
           src={"/reverso.png"}
           alt={"reverso"}
-          width={130}
-          height={50}
+          width={60}
+          height={30}
           className=" w-auto h-auto"
 
         />
